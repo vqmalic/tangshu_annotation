@@ -68,8 +68,6 @@ print("Removing names with only one character.")
 names = [x for x in names if len(x) > 1]
 print("{} unique names remain.".format(len(names)))
 
-
-#############ALT
 merged = 'б'.join(juans['raw'])
 matches = []
 i = 0
