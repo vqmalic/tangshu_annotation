@@ -152,7 +152,7 @@ new = new.split('б')
 
 juans['raw_ner_tagged'] = new
 print("Done. Saving to tangannotated.pkl")
-juans.to_pickle("tangannotated.pkl")
+juans.to_pickle("samples/tangannotated.pkl")
 
 '''
 # go through each juan and get indices of any matches

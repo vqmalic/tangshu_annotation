@@ -44,9 +44,9 @@ for catch in oldsents:
 	if caught == False:
 		print(catch)
 
-with open("annotatedsample.pkl", "wb") as f:
+with open("samples/annotatedsample.pkl", "wb") as f:
 	pickle.dump(newsents, f)
 
-with open("annotatedsample.txt", "w") as f:
+with open("samples/annotatedsample.txt", "w") as f:
 	for sent in newsents:
 		f.write(sent + "\n\n")
