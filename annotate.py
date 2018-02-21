@@ -14,7 +14,7 @@ juans = juans[juans['sourcebook'].isin(["Old_Book_of_Tang", "New_Book_of_Tang"])
 conn = sqlite3.connect("cbdb_sqlite.db")
 c = conn.cursor()
 c.execute('''
-	SELECT BIOG_MAIN.c_personid, c_name_chn, c_index_year, c_birthyear, c_death_age, c_death_age_approx, c_surname_chn, c_mingzi_chn, c_alt_name_chn
+	SELECT BIOG_MAIN.c_personid, c_name_chn, c_index_year, c_birthyear, c_deathyear, c_death_age_approx, c_surname_chn, c_mingzi_chn, c_alt_name_chn
 	FROM BIOG_MAIN LEFT JOIN ALTNAME_DATA
 	ON BIOG_MAIN.c_personid == ALTNAME_DATA.c_personid''')
 all_rows = c.fetchall()
@@ -116,20 +116,34 @@ with progress.Bar(expected_size=len(names)) as bar:
 		i += 1
 		bar.show(i)
 
+skipnext = False
 print("Segmenting...")
 segmented = []
 with progress.Bar(expected_size=len(filtered)) as bar:
 	for i, (a, b) in enumerate(filtered):
+		if skipnext == True:
+			skipnext = False
+			continue
 		if i == 0:
 			segmented.append(j[0:a])
 			segmented.append("  {{" + j[a:b] + "}}  ")
-		elif i == len(filtered):
+		elif i == len(filtered) - 1:
 			segmented.append(j[filtered[i-1][1]:a])
 			segmented.append("  {{" + j[a:b] + "}}  ")
 			segmented.append(j[b:len(j)-1])
 		else:
-			segmented.append(j[filtered[i-1][1]:a])
-			segmented.append("  {{" + j[a:b] + "}}  ")
+			overlap = False
+			if b > filtered[i+1][0]:
+				overlap = True
+			if not overlap:
+				segmented.append(j[filtered[i-1][1]:a])
+				segmented.append("  {{" + j[a:b] + "}}  ")
+			else:
+				segmented.append(j[filtered[i-1][1]:a])
+				segmented.append("  {{" + j[a:filtered[i+1][0]])
+				segmented.append("  {{" + j[filtered[i+1][0]:b])
+				segmented.append("}}  " + j[b:filtered[i+1][1]] + "}}  ")
+				skipnext = True
 		i += 1
 		bar.show(i)
 
